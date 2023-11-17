@@ -12,8 +12,13 @@ import (
 )
 
 func main() {
-	fHost := flag.String("host", "", "Host")
-	fPort := flag.Int("port", 12345, "Port")
+	var (
+		fHost = flag.String("host", "", "Host")
+		fPort = flag.Int("port", 12345, "Port")
+		fTLS  = flag.Bool("tls", false, "Enable TLS")
+		fCert = flag.String("cert", "", "Cert file")
+		fKey  = flag.String("key", "", "Key file")
+	)
 
 	flag.Parse()
 
@@ -41,10 +46,22 @@ func main() {
 		Handler: h.PublicRouter,
 	}
 
+	if *fTLS {
+		addr = fmt.Sprintf("https://%v", addr)
+	} else {
+		addr = fmt.Sprintf("http://%v", addr)
+	}
+
 	log.Printf("Starting server at %v", addr)
 
-	if err := srv.ListenAndServe(); err != nil {
-		panic(err)
+	if *fTLS {
+		if err := srv.ListenAndServeTLS(*fCert, *fKey); err != nil {
+			panic(err)
+		}
+	} else {
+		if err := srv.ListenAndServe(); err != nil {
+			panic(err)
+		}
 	}
 }
 
