@@ -12,6 +12,7 @@ import (
 
 type Handler struct {
 	handler.Base
+	Config       *Config
 	Service      *Service
 	PublicRouter *mux.Router
 }
