@@ -17,18 +17,18 @@ type Handler struct {
 }
 
 func (h *Handler) SetRoutes() {
-	h.registerDefaultHandlers()
-	h.registerAdminRoutes()
-	h.registerPublicRoutes()
-	h.registerNetworkProbes()
+	h.setDefaultHandlers()
+	h.setAdminRoutes()
+	h.setPublicRoutes()
+	h.setProbes()
 }
 
-func (h *Handler) registerDefaultHandlers() {
+func (h *Handler) setDefaultHandlers() {
 	h.PublicRouter.MethodNotAllowedHandler = http.HandlerFunc(h.MethodNotAllowed)
 	h.PublicRouter.NotFoundHandler = http.HandlerFunc(h.NotFound)
 }
 
-func (h *Handler) registerPublicRoutes() {
+func (h *Handler) setPublicRoutes() {
 	h.PublicRouter.HandleFunc("/v1alpha1/transactions", h.CreateTransaction).Methods(http.MethodPost)
 	h.PublicRouter.HandleFunc("/v1alpha1/transactions", h.ListTransactions).Methods(http.MethodGet)
 	h.PublicRouter.HandleFunc("/v1alpha1/transactions/{id}", h.GetTransaction).Methods(http.MethodGet)
@@ -40,7 +40,7 @@ func (h *Handler) registerPublicRoutes() {
 	h.PublicRouter.HandleFunc("/v1alpha1/operators", h.RetrieveReceivingMethod).Methods(http.MethodPost)
 }
 
-func (h *Handler) registerAdminRoutes() {
+func (h *Handler) setAdminRoutes() {
 	h.PublicRouter.HandleFunc("/v1alpha1/transactions", h.CreateTransaction).Methods(http.MethodPost)
 	h.PublicRouter.HandleFunc("/v1alpha1/transactions", h.ListTransactions).Methods(http.MethodGet)
 	h.PublicRouter.HandleFunc("/v1alpha1/transactions/{id}", h.GetTransaction).Methods(http.MethodGet)
@@ -52,7 +52,7 @@ func (h *Handler) registerAdminRoutes() {
 	h.PublicRouter.HandleFunc("/v1alpha1/operators", h.RetrieveReceivingMethod).Methods(http.MethodPost)
 }
 
-func (h *Handler) registerNetworkProbes() {
+func (h *Handler) setProbes() {
 	h.PublicRouter.HandleFunc("/healthz/ready", h.CreateTransaction).Methods(http.MethodPost)
 	h.PublicRouter.HandleFunc("/healthz/live", h.ListTransactions).Methods(http.MethodGet)
 }
