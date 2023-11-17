@@ -13,11 +13,11 @@ import (
 
 func main() {
 	var (
-		fHost = flag.String("host", "", "Host")
-		fPort = flag.Int("port", 12345, "Port")
-		fTLS  = flag.Bool("tls", false, "Enable TLS")
-		fCert = flag.String("cert", "", "Cert file")
-		fKey  = flag.String("key", "", "Key file")
+		fHost    = flag.String("host", "", "Host")
+		port     = flag.Int("port", 12345, "Port")
+		tls      = flag.Bool("tls", false, "Enable TLS")
+		certFile = flag.String("cert-file", "", "Cert file")
+		keyfile  = flag.String("key-file", "", "Key file")
 	)
 
 	flag.Parse()
@@ -27,7 +27,7 @@ func main() {
 		PublicRouter: mux.NewRouter(),
 		Config: &internal.Config{
 			Host: *fHost,
-			Port: int16(*fPort),
+			Port: int16(*port),
 		},
 	}
 
@@ -46,7 +46,7 @@ func main() {
 		Handler: h.PublicRouter,
 	}
 
-	if *fTLS {
+	if *tls {
 		addr = fmt.Sprintf("https://%v", addr)
 	} else {
 		addr = fmt.Sprintf("http://%v", addr)
@@ -54,8 +54,8 @@ func main() {
 
 	log.Printf("Starting server at %v", addr)
 
-	if *fTLS {
-		if err := srv.ListenAndServeTLS(*fCert, *fKey); err != nil {
+	if *tls {
+		if err := srv.ListenAndServeTLS(*certFile, *keyfile); err != nil {
 			panic(err)
 		}
 	} else {
