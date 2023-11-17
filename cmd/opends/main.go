@@ -14,7 +14,7 @@ func main() {
 		PublicRouter: mux.NewRouter(),
 	}
 
-	h.SetPublicRoutes()
+	h.SetRoutes()
 
 	srv := http.Server{
 		Addr:    ":12345",
