@@ -52,6 +52,8 @@ type Problem struct {
 
 type ListTransactionOptions struct {
 	ExternalID string `json:"external_id"`
+	Page       int    `json:"page"`
+	PerPage    int    `json:"per_page"`
 }
 
 type ListProductsOptions struct {

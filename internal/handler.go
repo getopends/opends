@@ -16,6 +16,22 @@ type Handler struct {
 	PublicRouter *mux.Router
 }
 
+func (h *Handler) Ping(rw http.ResponseWriter, req *http.Request) {
+	body, err := parseTransactionInput(req)
+	if err != nil {
+		h.JSON(rw, err)
+		return
+	}
+
+	resp, err := h.Service.CreateTransaction(body)
+	if err != nil {
+		h.JSON(rw, err)
+		return
+	}
+
+	h.JSON(rw, resp)
+}
+
 func (h *Handler) CreateTransaction(rw http.ResponseWriter, req *http.Request) {
 	body, err := parseTransactionInput(req)
 	if err != nil {
@@ -132,9 +148,9 @@ func parseTransactionInput(req *http.Request) (*CreateTransactionInput, *Problem
 }
 
 func parseTransactionID(req *http.Request) (uint64, *Problem) {
-	v := mux.Vars(req)
+	vars := mux.Vars(req)
 
-	id, ok := v["id"]
+	id, ok := vars["id"]
 	if !ok {
 		return 0, &Problem{Detail: "hey"}
 	}
@@ -148,14 +164,33 @@ func parseTransactionID(req *http.Request) (uint64, *Problem) {
 }
 
 func parseTransactionsOptions(req *http.Request) (*ListTransactionOptions, *Problem) {
-	externalID := req.URL.Query().Get("external_id")
-	if externalID == "" {
-		return nil, &Problem{
-			Detail: "hey",
-		}
+	opts := &ListTransactionOptions{}
+
+	if value := req.URL.Query().Get("external_id"); value != "" {
+		opts.ExternalID = value
 	}
 
-	return &ListTransactionOptions{
-		ExternalID: externalID,
-	}, nil
+	if value := req.URL.Query().Get("page"); value != "" {
+		page, err := strconv.Atoi(value)
+		if err != nil {
+			return nil, &Problem{
+				Detail: "hey",
+			}
+		}
+
+		opts.Page = page
+	}
+
+	if value := req.URL.Query().Get("per_page"); value != "" {
+		perPage, err := strconv.Atoi(value)
+		if err != nil {
+			return nil, &Problem{
+				Detail: "hey",
+			}
+		}
+
+		opts.PerPage = perPage
+	}
+
+	return opts, nil
 }
