@@ -22,19 +22,19 @@ const (
 )
 
 func (h *Handler) setPublicRoutes() {
-	r := h.PublicRouter.NewRoute().Subrouter()
+	r := h.PublicRouter.PathPrefix("/v1").Subrouter()
 
-	r.HandleFunc("/v1/transactions", h.CreateTransaction).Methods(http.MethodPost)
-	r.HandleFunc("/v1/transactions", h.ListTransactions).Methods(http.MethodGet)
-	r.HandleFunc("/v1/transactions/{id}", h.GetTransaction).Methods(http.MethodGet)
-	r.HandleFunc("/v1/transactions/{id}", h.GetTransaction).Methods(http.MethodPut)
-	r.HandleFunc("/v1/transactions/{id}/confirm", h.GetTransaction).Methods(http.MethodPost)
-	r.HandleFunc("/v1/receiving-methods/validate", h.ValidateReceivingMethod).Methods(http.MethodPost)
-	r.HandleFunc("/v1/receiving-methods/retrieve", h.RetrieveReceivingMethod).Methods(http.MethodPost)
-	r.HandleFunc("/v1/balances", h.RetrieveReceivingMethod).Methods(http.MethodPost)
-	r.HandleFunc("/v1/products", h.RetrieveReceivingMethod).Methods(http.MethodPost)
-	r.HandleFunc("/v1/services", h.RetrieveReceivingMethod).Methods(http.MethodPost)
-	r.HandleFunc("/v1/operators", h.RetrieveReceivingMethod).Methods(http.MethodPost)
+	r.HandleFunc("/transactions", h.CreateTransaction).Methods(http.MethodPost)
+	r.HandleFunc("/transactions", h.ListTransactions).Methods(http.MethodGet)
+	r.HandleFunc("/transactions/{id}", h.GetTransaction).Methods(http.MethodGet)
+	r.HandleFunc("/transactions/{id}", h.GetTransaction).Methods(http.MethodPut)
+	r.HandleFunc("/transactions/{id}/confirm", h.GetTransaction).Methods(http.MethodPost)
+	r.HandleFunc("/receiving-methods/validate", h.ValidateReceivingMethod).Methods(http.MethodPost)
+	r.HandleFunc("/receiving-methods/retrieve", h.RetrieveReceivingMethod).Methods(http.MethodPost)
+	r.HandleFunc("/balances", h.RetrieveReceivingMethod).Methods(http.MethodPost)
+	r.HandleFunc("/products", h.RetrieveReceivingMethod).Methods(http.MethodPost)
+	r.HandleFunc("/services", h.RetrieveReceivingMethod).Methods(http.MethodPost)
+	r.HandleFunc("/operators", h.RetrieveReceivingMethod).Methods(http.MethodPost)
 
 	r.Use(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -47,17 +47,17 @@ func (h *Handler) setPublicRoutes() {
 }
 
 func (h *Handler) setAdminRoutes() {
-	r := h.PublicRouter.NewRoute().Subrouter()
+	r := h.PublicRouter.PathPrefix("/v1").Subrouter()
 
-	r.HandleFunc("/v1/providers", h.CreateTransaction).Methods(http.MethodPost).Name("CreateProvider")
-	r.HandleFunc("/v1/providers", h.ListTransactions).Methods(http.MethodGet).Name("ListProviders")
-	r.HandleFunc("/v1/providers/{id}", h.ListTransactions).Methods(http.MethodDelete)
-	r.HandleFunc("/v1/providers/{id}", h.ListTransactions).Methods(http.MethodPut)
+	r.HandleFunc("/providers", h.CreateTransaction).Methods(http.MethodPost).Name("CreateProvider")
+	r.HandleFunc("/providers", h.ListTransactions).Methods(http.MethodGet).Name("ListProviders")
+	r.HandleFunc("/providers/{id}", h.ListTransactions).Methods(http.MethodDelete)
+	r.HandleFunc("/providers/{id}", h.ListTransactions).Methods(http.MethodPut)
 
-	r.HandleFunc("/v1/services", h.CreateTransaction).Methods(http.MethodPost).Name("CreateService")
-	r.HandleFunc("/v1/services", h.ListTransactions).Methods(http.MethodGet).Name("ListServices")
-	r.HandleFunc("/v1/services/{id}", h.ListTransactions).Methods(http.MethodDelete)
-	r.HandleFunc("/v1/services/{id}", h.ListTransactions).Methods(http.MethodPut)
+	r.HandleFunc("/services", h.CreateTransaction).Methods(http.MethodPost).Name("CreateService")
+	r.HandleFunc("/services", h.ListTransactions).Methods(http.MethodGet).Name("ListServices")
+	r.HandleFunc("/services/{id}", h.ListTransactions).Methods(http.MethodDelete)
+	r.HandleFunc("/services/{id}", h.ListTransactions).Methods(http.MethodPut)
 
 	r.Use(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
