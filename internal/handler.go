@@ -16,13 +16,6 @@ type Handler struct {
 	PublicRouter *mux.Router
 }
 
-func (h *Handler) SetRoutes() {
-	h.setDefaultHandlers()
-	h.setAdminRoutes()
-	h.setPublicRoutes()
-	h.setProbes()
-}
-
 func (h *Handler) CreateTransaction(rw http.ResponseWriter, req *http.Request) {
 	body, err := parseTransactionInput(req)
 	if err != nil {

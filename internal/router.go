@@ -2,6 +2,13 @@ package internal
 
 import "net/http"
 
+func (h *Handler) SetRoutes() {
+	h.setDefaultHandlers()
+	h.setAdminRoutes()
+	h.setPublicRoutes()
+	h.setProbes()
+}
+
 func (h *Handler) setDefaultHandlers() {
 	h.PublicRouter.MethodNotAllowedHandler = http.HandlerFunc(h.MethodNotAllowed)
 	h.PublicRouter.NotFoundHandler = http.HandlerFunc(h.NotFound)
