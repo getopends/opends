@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/getopends/opends/internal/handler"
+	"github.com/getopends/opends/pkg/handler"
 	"github.com/gorilla/mux"
 )
 
