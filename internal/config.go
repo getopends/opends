@@ -92,6 +92,18 @@ func ConfigInit() (*Config, error) {
 				Key:   "Logger.Mode",
 				Value: "LOGGER_MODE",
 			},
+			{
+				Key:   "Cache.Backend",
+				Value: "CACHE_BACKEND",
+			},
+			{
+				Key:   "Cache.Address",
+				Value: "CACHE_ADDRESS",
+			},
+			{
+				Key:   "Cache.Database",
+				Value: "CACHE_DB",
+			},
 		}
 	)
 
@@ -120,6 +132,7 @@ type Config struct {
 	Admin    ServerOptions   `mapstructure:"admin"`
 	Database DatabaseOptions `mapstructure:"database"`
 	Logger   LoggerOptions   `mapstructure:"logger"`
+	Cache    CacheOptions    `mapstructure:"cache"`
 }
 
 type ServerOptions struct {
@@ -144,6 +157,13 @@ type DatabaseOptions struct {
 type LoggerOptions struct {
 	Driver string `mapstructure:"driver"`
 	Mode   string `mapstructure:"mode"`
+}
+
+type CacheOptions struct {
+	Backend  string `mapstructure:"backend"`
+	Address  string `mapstructure:"address"`
+	Password string `mapstructure:"password"`
+	Database string `mapstructure:"database"`
 }
 
 type BindEnvOptions struct {

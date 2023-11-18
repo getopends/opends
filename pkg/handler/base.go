@@ -7,6 +7,6 @@ import (
 
 type Base struct{}
 
-func (b Base) JSON(rw http.ResponseWriter, a any) error {
+func (b Base) SendJSON(rw http.ResponseWriter, a any) error {
 	return json.NewEncoder(rw).Encode(a)
 }

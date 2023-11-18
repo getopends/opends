@@ -20,97 +20,97 @@ type Handler struct {
 func (h *Handler) Ping(rw http.ResponseWriter, req *http.Request) {
 	body, err := parseTransactionInput(req)
 	if err != nil {
-		h.JSON(rw, err)
+		h.SendJSON(rw, err)
 		return
 	}
 
 	resp, err := h.Service.CreateTransaction(body)
 	if err != nil {
-		h.JSON(rw, err)
+		h.SendJSON(rw, err)
 		return
 	}
 
-	h.JSON(rw, resp)
+	h.SendJSON(rw, resp)
 }
 
 func (h *Handler) CreateTransaction(rw http.ResponseWriter, req *http.Request) {
 	body, err := parseTransactionInput(req)
 	if err != nil {
-		h.JSON(rw, err)
+		h.SendJSON(rw, err)
 		return
 	}
 
 	resp, err := h.Service.CreateTransaction(body)
 	if err != nil {
-		h.JSON(rw, err)
+		h.SendJSON(rw, err)
 		return
 	}
 
-	h.JSON(rw, resp)
+	h.SendJSON(rw, resp)
 }
 
 func (h *Handler) ListTransactions(rw http.ResponseWriter, req *http.Request) {
 	opts, err := parseTransactionsOptions(req)
 	if err != nil {
-		h.JSON(rw, err)
+		h.SendJSON(rw, err)
 		return
 	}
 
 	resp, err := h.Service.ListTransactions(opts)
 	if err != nil {
-		h.JSON(rw, err)
+		h.SendJSON(rw, err)
 		return
 	}
 
-	h.JSON(rw, resp)
+	h.SendJSON(rw, resp)
 }
 
 func (h *Handler) GetTransaction(rw http.ResponseWriter, req *http.Request) {
 	id, apiErr := parseTransactionID(req)
 	if apiErr != nil {
-		h.JSON(rw, apiErr)
+		h.SendJSON(rw, apiErr)
 		return
 	}
 
 	resp, apiErr := h.Service.GetTransaction(id)
 	if apiErr != nil {
-		h.JSON(rw, apiErr)
+		h.SendJSON(rw, apiErr)
 		return
 	}
 
-	h.JSON(rw, resp)
+	h.SendJSON(rw, resp)
 }
 
 func (h *Handler) ValidateReceivingMethod(rw http.ResponseWriter, req *http.Request) {
 	id, apiErr := parseTransactionID(req)
 	if apiErr != nil {
-		h.JSON(rw, apiErr)
+		h.SendJSON(rw, apiErr)
 		return
 	}
 
 	resp, apiErr := h.Service.GetTransaction(id)
 	if apiErr != nil {
-		h.JSON(rw, apiErr)
+		h.SendJSON(rw, apiErr)
 		return
 	}
 
-	h.JSON(rw, resp)
+	h.SendJSON(rw, resp)
 }
 
 func (h *Handler) RetrieveReceivingMethod(rw http.ResponseWriter, req *http.Request) {
 	id, apiErr := parseTransactionID(req)
 	if apiErr != nil {
-		h.JSON(rw, apiErr)
+		h.SendJSON(rw, apiErr)
 		return
 	}
 
 	resp, apiErr := h.Service.GetTransaction(id)
 	if apiErr != nil {
-		h.JSON(rw, apiErr)
+		h.SendJSON(rw, apiErr)
 		return
 	}
 
-	h.JSON(rw, resp)
+	h.SendJSON(rw, resp)
 }
 
 func (h Handler) NotFound(w http.ResponseWriter, r *http.Request) {
