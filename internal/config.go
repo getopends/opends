@@ -1,8 +1,6 @@
 package internal
 
 import (
-	"log"
-
 	"github.com/spf13/viper"
 )
 
@@ -56,8 +54,6 @@ func NewConfig() (*Config, error) {
 			return nil, err
 		}
 	}
-
-	log.Println(viper.AllKeys())
 
 	cfg := &Config{}
 

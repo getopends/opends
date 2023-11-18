@@ -32,8 +32,6 @@ func main() {
 		panic(err)
 	}
 
-	log.Printf("Config: %#+v\n", cfg)
-
 	h := &internal.Handler{
 		Service:      &internal.Service{},
 		PublicRouter: mux.NewRouter(),
