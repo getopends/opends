@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/viper"
 )
@@ -34,95 +35,91 @@ var (
 	envPrefix   = "OPENDS"
 	bindEnvOpts = []BindEnvOptions{
 		{
-			Key:   "Public.Host",
+			Key:   "public.host",
 			Value: "PUBLIC_HOST",
 		},
 		{
-			Key:   "Public.Port",
+			Key:   "public.port",
 			Value: "PUBLIC_PORT",
 		},
 		{
-			Key:   "Admin.Host",
+			Key:   "admin.host",
 			Value: "ADMIN_HOST",
 		},
 		{
-			Key:   "Admin.Port",
+			Key:   "admin.port",
 			Value: "ADMIN_PORT",
 		},
 		{
-			Key:   "Database.Driver",
+			Key:   "database.driver",
 			Value: "DB_DRIVER",
 		},
 		{
-			Key:   "Database.DSN",
+			Key:   "database.dsn",
 			Value: "DB_DSN",
 		},
 		{
-			Key:   "Public.TLS.Enable",
+			Key:   "public.tls.enable",
 			Value: "PUBLIC_TLS_ENABLE",
 		},
 		{
-			Key:   "Public.TLS.KeyFile",
+			Key:   "public.tls.key_file",
 			Value: "PUBLIC_TLS_KEY_FILE",
 		},
 		{
-			Key:   "Public.TLS.CertFile",
+			Key:   "public.tls.cert_file",
 			Value: "PUBLIC_TLS_CERT_FILE",
 		},
 		{
-			Key:   "Public.TLS.Key",
+			Key:   "public.tls.key",
 			Value: "PUBLIC_TLS_KEY",
 		},
 		{
-			Key:   "Public.TLS.Cert",
+			Key:   "public.tls.cert",
 			Value: "PUBLIC_TLS_CERT",
 		},
 		{
-			Key:   "Logger.Driver",
+			Key:   "logger.driver",
 			Value: "LOGGER_DRIVER",
 		},
 		{
-			Key:   "Logger.Mode",
+			Key:   "logger.mode",
 			Value: "LOGGER_MODE",
 		},
 		{
-			Key:   "Cache.Backend",
+			Key:   "cache.backend",
 			Value: "CACHE_BACKEND",
 		},
 		{
-			Key:   "Cache.Address",
+			Key:   "cache.address",
 			Value: "CACHE_ADDRESS",
 		},
 		{
-			Key:   "Cache.Database",
+			Key:   "cache.database",
 			Value: "CACHE_DB",
 		},
 		{
-			Key:   "CORS.Enable",
+			Key:   "cors.enable",
 			Value: "CORS_ENABLE",
 		},
 		{
-			Key:   "CORS.MaxAge",
+			Key:   "cors.max_age",
 			Value: "CORS_MAX_AGE",
 		},
 		{
-			Key:   "CORS.AllowedOrigns",
+			Key:   "cors.allowed_origins",
 			Value: "CORS_ALLOWED_ORIGINS",
 		},
 		{
-			Key:   "CORS.AllowedHeaders",
+			Key:   "cors.allowed_headers",
 			Value: "CORS_ALLOWED_HEADERS",
 		},
 		{
-			Key:   "CORS.AllowedMethods",
+			Key:   "cors.allowed_methods",
 			Value: "CORS_ALLOWED_METHODS",
 		},
 		{
-			Key:   "CORS.ExposedHeaders",
-			Value: "CORS_EXPOSED_METHODS",
-		},
-		{
-			Key:   "CORS.AllowCredentials",
+			Key:   "cors.allow_credentials",
 			Value: "CORS_ALLOW_CREDENTIALS",
 		},
 	}
@@ -136,6 +133,8 @@ func ConfigInit() (*Config, error) {
 	viper.AddConfigPath(".")
 
 	for _, env := range bindEnvOpts {
+		log.Printf("Binding %v to %v\n", env.Value, env.Key)
+
 		viper.BindEnv(env.Key, fmt.Sprintf("%v_%v", envPrefix, env.Value))
 	}
 
@@ -145,6 +144,8 @@ func ConfigInit() (*Config, error) {
 			return nil, err
 		}
 	}
+
+	log.Println(viper.AllKeys())
 
 	cfg := &Config{}
 
@@ -197,12 +198,12 @@ type CacheOptions struct {
 
 type CORSOptions struct {
 	Enable           bool     `mapstructure:"enable"`
-	AllowedOrigins   []string `mapstructure:"allowed-origins"`
-	AllowedMethods   []string `mapstructure:"allowed-methods"`
-	AllowedHeaders   []string `mapstructure:"allowed-headers"`
-	ExposedHeaders   []string `mapstructure:"exposed-headers"`
-	MaxAge           int      `mapstructure:"max-age"`
-	AllowCredentials bool     `mapstructure:"allow-credentials"`
+	AllowedOrigins   []string `mapstructure:"allowed_origins"`
+	AllowedMethods   []string `mapstructure:"allowed_methods"`
+	AllowedHeaders   []string `mapstructure:"allowed_headers"`
+	ExposedHeaders   []string `mapstructure:"exposed_headers"`
+	MaxAge           int      `mapstructure:"max_age"`
+	AllowCredentials bool     `mapstructure:"allow_credentials"`
 }
 
 type BindEnvOptions struct {

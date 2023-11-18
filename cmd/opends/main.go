@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os/signal"
+	"syscall"
 
 	"github.com/getopends/opends/internal"
 	"github.com/gorilla/handlers"
@@ -86,11 +90,23 @@ func main() {
 		Handler: r,
 	}
 
-	log.Printf("Starting server at %v", addr)
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 
-	if err := srv.ListenAndServe(); err != nil {
-		panic(err)
+	go func() {
+		log.Printf("Starting server at %v", addr)
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("listen and serve returned err: %v", err)
+		}
+	}()
+
+	<-ctx.Done()
+	log.Println("got interruption signal")
+	if err := srv.Shutdown(context.TODO()); err != nil {
+		log.Printf("server shutdown returned an err: %v\n", err)
 	}
+
+	log.Println("server stopped")
 }
 
 type Response struct {
