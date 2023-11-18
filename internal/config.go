@@ -7,30 +7,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-/*
-
-{
-   "public": {
-   		"host": "127.0.0.1",
-        "port": 13000
-   },
-   "admin": {
-   		"host": "127.0.0.1",
-        "port": 13001
-   },
-   "logger": {
-   		"driver": "zap",
-        "mode": "prod"
-   },
-   "database": {
-   		"driver": "postgres",
-        "dsn": "postgres@postgres:5432/db"
-   }
-}
-
-
-*/
-
 var (
 	envPrefix   = "OPENDS"
 	bindEnvOpts = []BindEnvOptions{
@@ -125,7 +101,7 @@ var (
 	}
 )
 
-func ConfigInit() (*Config, error) {
+func NewConfig() (*Config, error) {
 	viper.SetConfigName("opends.conf")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("/etc/opends.conf")
@@ -133,8 +109,6 @@ func ConfigInit() (*Config, error) {
 	viper.AddConfigPath(".")
 
 	for _, env := range bindEnvOpts {
-		log.Printf("Binding %v to %v\n", env.Value, env.Key)
-
 		viper.BindEnv(env.Key, fmt.Sprintf("%v_%v", envPrefix, env.Value))
 	}
 

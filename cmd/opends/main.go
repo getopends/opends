@@ -27,7 +27,7 @@ func main() {
 		flag.Parse()
 	*/
 
-	cfg, err := internal.ConfigInit()
+	cfg, err := internal.NewConfig()
 	if err != nil {
 		panic(err)
 	}
