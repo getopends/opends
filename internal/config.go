@@ -173,8 +173,8 @@ type ServerOptions struct {
 
 type TLSOptions struct {
 	Enable   bool   `mapstructure:"enable"`
-	KeyFile  string `mapstructure:"key-file"`
-	CertFile string `mapstructure:"cert-file"`
+	KeyFile  string `mapstructure:"key_file"`
+	CertFile string `mapstructure:"cert_file"`
 	Key      string `mapstructure:"key"`
 	Cert     string `mapstructure:"cert"`
 }
