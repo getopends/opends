@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/spf13/viper"
@@ -9,95 +8,29 @@ import (
 
 var (
 	envPrefix   = "OPENDS"
-	bindEnvOpts = []BindEnvOptions{
-		{
-			Key:   "public.host",
-			Value: "PUBLIC_HOST",
-		},
-		{
-			Key:   "public.port",
-			Value: "PUBLIC_PORT",
-		},
-		{
-			Key:   "admin.host",
-			Value: "ADMIN_HOST",
-		},
-		{
-			Key:   "admin.port",
-			Value: "ADMIN_PORT",
-		},
-		{
-			Key:   "database.driver",
-			Value: "DB_DRIVER",
-		},
-		{
-			Key:   "database.dsn",
-			Value: "DB_DSN",
-		},
-		{
-			Key:   "public.tls.enable",
-			Value: "PUBLIC_TLS_ENABLE",
-		},
-		{
-			Key:   "public.tls.key_file",
-			Value: "PUBLIC_TLS_KEY_FILE",
-		},
-		{
-			Key:   "public.tls.cert_file",
-			Value: "PUBLIC_TLS_CERT_FILE",
-		},
-		{
-			Key:   "public.tls.key",
-			Value: "PUBLIC_TLS_KEY",
-		},
-		{
-			Key:   "public.tls.cert",
-			Value: "PUBLIC_TLS_CERT",
-		},
-		{
-			Key:   "logger.driver",
-			Value: "LOGGER_DRIVER",
-		},
-		{
-			Key:   "logger.mode",
-			Value: "LOGGER_MODE",
-		},
-		{
-			Key:   "cache.backend",
-			Value: "CACHE_BACKEND",
-		},
-		{
-			Key:   "cache.address",
-			Value: "CACHE_ADDRESS",
-		},
-		{
-			Key:   "cache.database",
-			Value: "CACHE_DB",
-		},
-		{
-			Key:   "cors.enable",
-			Value: "CORS_ENABLE",
-		},
-		{
-			Key:   "cors.max_age",
-			Value: "CORS_MAX_AGE",
-		},
-		{
-			Key:   "cors.allowed_origins",
-			Value: "CORS_ALLOWED_ORIGINS",
-		},
-		{
-			Key:   "cors.allowed_headers",
-			Value: "CORS_ALLOWED_HEADERS",
-		},
-		{
-			Key:   "cors.allowed_methods",
-			Value: "CORS_ALLOWED_METHODS",
-		},
-		{
-			Key:   "cors.allow_credentials",
-			Value: "CORS_ALLOW_CREDENTIALS",
-		},
+	bindEnvOpts = [][]string{
+		{"public.host", "OPENDS_PUBLIC_HOST"},
+		{"public.port", "OPENDS_PUBLIC_PORT"},
+		{"admin.host", "OPENDS_ADMIN_HOST"},
+		{"admin.port", "OPENDS_ADMIN_PORT"},
+		{"database.driver", "OPENDS_DB_DRIVER"},
+		{"database.dsn", "OPENDS_DB_DSN"},
+		{"public.tls.enable", "OPENDS_PUBLIC_TLS_ENABLE"},
+		{"public.tls.key_file", "OPENDS_PUBLIC_TLS_KEY_FILE"},
+		{"public.tls.cert_file", "OPENDS_PUBLIC_TLS_CERT_FILE"},
+		{"public.tls.key", "OPENDS_PUBLIC_TLS_KEY"},
+		{"public.tls.cert", "OPENDS_PUBLIC_TLS_CERT"},
+		{"logger.driver", "OPENDS_LOGGER_DRIVER"},
+		{"logger.mode", "OPENDS_LOGGER_MODE"},
+		{"cache.backend", "OPENDS_CACHE_BACKEND"},
+		{"cache.address", "OPENDS_CACHE_ADDRESS"},
+		{"cache.database", "OPENDS_CACHE_DB"},
+		{"cors.enable", "OPENDS_CORS_ENABLE"},
+		{"cors.max_age", "OPENDS_CORS_MAX_AGE"},
+		{"cors.allowed_origins", "OPENDS_CORS_ALLOWED_ORIGINS"},
+		{"cors.allowed_headers", "OPENDS_CORS_ALLOWED_HEADERS"},
+		{"cors.allowed_methods", "OPENDS_CORS_ALLOWED_METHODS"},
+		{"cors.allow_credentials", "OPENDS_CORS_ALLOW_CREDENTIALS"},
 	}
 
 	defaultConfigFile = "opends.conf"
@@ -114,7 +47,7 @@ func NewConfig() (*Config, error) {
 	viper.AddConfigPath(".")
 
 	for _, env := range bindEnvOpts {
-		viper.BindEnv(env.Key, fmt.Sprintf("%v_%v", envPrefix, env.Value))
+		viper.BindEnv(env...)
 	}
 
 	err := viper.ReadInConfig()
@@ -183,9 +116,4 @@ type CORSOptions struct {
 	ExposedHeaders   []string `mapstructure:"exposed_headers"`
 	MaxAge           int      `mapstructure:"max_age"`
 	AllowCredentials bool     `mapstructure:"allow_credentials"`
-}
-
-type BindEnvOptions struct {
-	Key   string
-	Value string
 }
