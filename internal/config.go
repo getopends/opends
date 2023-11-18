@@ -99,13 +99,18 @@ var (
 			Value: "CORS_ALLOW_CREDENTIALS",
 		},
 	}
+
+	defaultConfigFile = "opends.conf"
+	defaultConfigType = "yaml"
+	mainConfigPath    = "/etc/opends.con"
+	altConfigPath     = "/etc/opends.d/opends.con"
 )
 
 func NewConfig() (*Config, error) {
-	viper.SetConfigName("opends.conf")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("/etc/opends.conf")
-	viper.AddConfigPath("/etc/opends.d/opends.conf")
+	viper.SetConfigName(defaultConfigFile)
+	viper.SetConfigType(defaultConfigType)
+	viper.AddConfigPath(mainConfigPath)
+	viper.AddConfigPath(altConfigPath)
 	viper.AddConfigPath(".")
 
 	for _, env := range bindEnvOpts {
