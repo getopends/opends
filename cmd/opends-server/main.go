@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -20,18 +21,30 @@ func main() {
 	cmd.Execute()
 }
 
+var cfgPath string
+
 func cmdRoot() *cobra.Command {
+	var cfg internal.Config
+
 	cmd := &cobra.Command{
-		Use: "opends",
+		Use: "opends-server",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runServe()
+			cfg, err := internal.NewConfig(viper.GetString("config"))
+			if err != nil {
+				return err
+			}
+
+			return runServe(cfg)
 		},
 	}
 
 	cmd.AddCommand(
-		cmdServe(),
+		cmdServe(&cfg),
 		cmdMigrate(),
 	)
+
+	cmd.PersistentFlags().String("config", "", "Config")
+	viper.BindPFlag("config", cmd.PersistentFlags().Lookup("config"))
 
 	return cmd
 }
@@ -47,16 +60,10 @@ func cmdMigrate() *cobra.Command {
 	return migrateCmd
 }
 
-func runServe() error {
-	cfg, err := internal.NewConfig()
-	if err != nil {
-		panic(err)
-	}
-
+func runServe(cfg *internal.Config) error {
 	h := &internal.Handler{
 		Service:      &internal.Service{},
 		PublicRouter: mux.NewRouter(),
-		Config:       &internal.Config{},
 	}
 
 	h.SetRoutes()
@@ -133,11 +140,11 @@ func runServe() error {
 	return nil
 }
 
-func cmdServe() *cobra.Command {
+func cmdServe(cfg *internal.Config) *cobra.Command {
 	serveCmd := &cobra.Command{
 		Use: "serve",
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return runServe()
+			return runServe(cfg)
 		},
 	}
 

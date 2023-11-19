@@ -37,12 +37,17 @@ var (
 	}
 )
 
-func NewConfig() (*Config, error) {
-	viper.SetConfigName(defaultConfigFile)
-	viper.SetConfigType(defaultConfigType)
-	viper.AddConfigPath(mainConfigPath)
-	viper.AddConfigPath(altConfigPath)
-	viper.AddConfigPath(".")
+func NewConfig(path string) (*Config, error) {
+	if path != "" {
+		viper.SetConfigType(defaultConfigType)
+		viper.SetConfigFile(path)
+	} else {
+		viper.SetConfigName(defaultConfigFile)
+		viper.SetConfigType(defaultConfigType)
+		viper.AddConfigPath(mainConfigPath)
+		viper.AddConfigPath(altConfigPath)
+		viper.AddConfigPath(".")
+	}
 
 	for _, env := range bindEnvOpts {
 		viper.BindEnv(env...)
