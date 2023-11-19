@@ -1,12 +1,12 @@
 [Unit]
-Description=mydns
+Description=opends server
 Wants=network-online.target
 After=network-online.target
 
 [Service]
 User=opends
 Group=opends
-ExecStart=/usr/bin/opends
+ExecStart=/usr/bin/opends-server
 SyslogLevelPrefix=no
 StandardOutput=journal
 StandardError=journal
