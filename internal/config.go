@@ -5,8 +5,12 @@ import (
 )
 
 var (
-	envPrefix   = "OPENDS"
-	bindEnvOpts = [][]string{
+	envPrefix         = "OPENDS"
+	defaultConfigFile = "opends.conf"
+	defaultConfigType = "yaml"
+	mainConfigPath    = "/etc/opends.con"
+	altConfigPath     = "/etc/opends.d/opends.conf"
+	bindEnvOpts       = [][]string{
 		{"public.host", "OPENDS_PUBLIC_HOST"},
 		{"public.port", "OPENDS_PUBLIC_PORT"},
 		{"admin.host", "OPENDS_ADMIN_HOST"},
@@ -29,12 +33,8 @@ var (
 		{"cors.allowed_headers", "OPENDS_CORS_ALLOWED_HEADERS"},
 		{"cors.allowed_methods", "OPENDS_CORS_ALLOWED_METHODS"},
 		{"cors.allow_credentials", "OPENDS_CORS_ALLOW_CREDENTIALS"},
+		{"debug", "OPENDS_DEBUG"},
 	}
-
-	defaultConfigFile = "opends.conf"
-	defaultConfigType = "yaml"
-	mainConfigPath    = "/etc/opends.con"
-	altConfigPath     = "/etc/opends.d/opends.con"
 )
 
 func NewConfig() (*Config, error) {
@@ -55,13 +55,13 @@ func NewConfig() (*Config, error) {
 		}
 	}
 
-	cfg := &Config{}
+	var cfg Config
 
-	if err := viper.Unmarshal(cfg); err != nil {
+	if err := viper.Unmarshal(&cfg); err != nil {
 		return nil, err
 	}
 
-	return cfg, nil
+	return &cfg, nil
 }
 
 type Config struct {
@@ -71,6 +71,7 @@ type Config struct {
 	Logger   LoggerOptions   `mapstructure:"logger"`
 	Cache    CacheOptions    `mapstructure:"cache"`
 	CORS     CORSOptions     `mapstructure:"cors"`
+	Debug    bool            `mapstructure:"debug"`
 }
 
 type ServerOptions struct {
