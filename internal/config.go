@@ -22,6 +22,9 @@ var (
 		{"public.tls.cert_file", "OPENDS_PUBLIC_TLS_CERT_FILE"},
 		{"public.tls.key", "OPENDS_PUBLIC_TLS_KEY"},
 		{"public.tls.cert", "OPENDS_PUBLIC_TLS_CERT"},
+		{"public.tls.cacert", "OPENDS_PUBLIC_CA_CERT"},
+		{"public.tls.cacert_file", "OPENDS_PUBLIC_TLS_CA_CERT_FILE"},
+		{"public.tls.require_client_cert", "OPENDS_PUBLIC_TLS_REQUIRE_CLIENT_CERT"},
 		{"logger.driver", "OPENDS_LOGGER_DRIVER"},
 		{"logger.mode", "OPENDS_LOGGER_MODE"},
 		{"cache.backend", "OPENDS_CACHE_BACKEND"},
@@ -86,11 +89,14 @@ type ServerOptions struct {
 }
 
 type TLSOptions struct {
-	Enable   bool   `mapstructure:"enable"`
-	KeyFile  string `mapstructure:"key_file"`
-	CertFile string `mapstructure:"cert_file"`
-	Key      string `mapstructure:"key"`
-	Cert     string `mapstructure:"cert"`
+	Enable            bool   `mapstructure:"enable"`
+	KeyFile           string `mapstructure:"key_file"`
+	CertFile          string `mapstructure:"cert_file"`
+	Key               string `mapstructure:"key"`
+	Cert              string `mapstructure:"cert"`
+	CACert            string `mapstructure:"cacert"`
+	CACertFile        string `mapstructure:"cacert_file"`
+	RequireClientCert bool   `mapstructure:"require_client_cert"`
 }
 
 type DatabaseOptions struct {
