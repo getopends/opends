@@ -8,8 +8,8 @@ var (
 	envPrefix         = "OPENDS"
 	defaultConfigFile = "opends.conf"
 	defaultConfigType = "yaml"
-	mainConfigPath    = "/etc/opends.con"
-	altConfigPath     = "/etc/opends.d/opends.conf"
+	mainConfigPath    = "/etc/"
+	altConfigPath     = "/etc/opends.d/"
 	bindEnvOpts       = [][]string{
 		{"public.host", "OPENDS_PUBLIC_HOST"},
 		{"public.port", "OPENDS_PUBLIC_PORT"},

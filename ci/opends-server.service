@@ -6,11 +6,11 @@ After=network-online.target
 [Service]
 User=opends
 Group=opends
-ExecStart=/usr/bin/opends-server
+ExecStart=/usr/bin/opends-server --config /etc/opends.conf
 SyslogLevelPrefix=no
 StandardOutput=journal
 StandardError=journal
-Restart=no
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
