@@ -2,13 +2,15 @@ package cmd
 
 import "github.com/spf13/cobra"
 
-func cmdMigrate() *cobra.Command {
-	migrateCmd := &cobra.Command{
-		Use: "migrate",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return nil
-		},
+func migrateCmd() *cobra.Command {
+	newCmd := &cobra.Command{
+		Use:  "migrate",
+		RunE: doMigrate,
 	}
 
-	return migrateCmd
+	return newCmd
+}
+
+func doMigrate(cmd *cobra.Command, args []string) error {
+	return nil
 }

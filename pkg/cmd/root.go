@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/getopends/opends/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -12,18 +14,23 @@ func RootCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "opends-server",
 		RunE: func(_ *cobra.Command, _ []string) error {
-			cfg, err := internal.NewConfig(viper.GetString("config"))
+			cfgFile := viper.GetString("config")
+			if cfgFile == "" {
+				cfgFile = os.Getenv("OPENDS_CONFIG_FILE")
+			}
+
+			cfg, err := internal.NewConfig(cfgFile)
 			if err != nil {
 				return err
 			}
 
-			return runServe(cfg)
+			return doServe(cfg)
 		},
 	}
 
 	cmd.AddCommand(
-		cmdServe(&cfg),
-		cmdMigrate(),
+		serveCmd(&cfg),
+		migrateCmd(),
 	)
 
 	cmd.PersistentFlags().String("config", "", "Config")

@@ -18,11 +18,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func cmdServe(cfg *internal.Config) *cobra.Command {
+var defaultPort = 13000
+
+func serveCmd(cfg *internal.Config) *cobra.Command {
 	serveCmd := &cobra.Command{
 		Use: "serve",
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return runServe(cfg)
+			return doServe(cfg)
 		},
 	}
 
@@ -31,7 +33,7 @@ func cmdServe(cfg *internal.Config) *cobra.Command {
 	return serveCmd
 }
 
-func runServe(cfg *internal.Config) error {
+func doServe(cfg *internal.Config) error {
 	h := &internal.Handler{
 		Service:      &internal.Service{},
 		PublicRouter: mux.NewRouter(),
@@ -46,12 +48,12 @@ func runServe(cfg *internal.Config) error {
 
 	port := cfg.Public.Port
 	if port == 0 {
-		port = 13000
+		port = int16(defaultPort)
 	}
 
 	addr := fmt.Sprintf("%v:%v", host, port)
 
-	var r http.Handler = h.PublicRouter
+	var router http.Handler = h.PublicRouter
 	if cfg.CORS.Enable {
 		opts := []handlers.CORSOption{}
 
@@ -79,12 +81,12 @@ func runServe(cfg *internal.Config) error {
 			opts = append(opts, handlers.ExposedHeaders(cfg.CORS.ExposedHeaders))
 		}
 
-		r = handlers.CORS(opts...)(r)
+		router = handlers.CORS(opts...)(router)
 	}
 
 	srv := http.Server{
 		Addr:    addr,
-		Handler: r,
+		Handler: router,
 	}
 
 	tlsConfig := &tls.Config{}
