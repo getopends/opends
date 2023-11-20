@@ -1,16 +1,23 @@
 package cmd
 
-import "github.com/spf13/cobra"
+import (
+	"context"
+
+	"github.com/getopends/opends/internal"
+	"github.com/spf13/cobra"
+)
 
 func migrateCmd() *cobra.Command {
 	newCmd := &cobra.Command{
 		Use:  "migrate",
-		RunE: doMigrate,
+		RunE: runCmd(doMigrate),
 	}
 
 	return newCmd
 }
 
-func doMigrate(cmd *cobra.Command, args []string) error {
+func doMigrate(ctx context.Context, cmd *cobra.Command, _ []string, cfg *internal.Config) error {
+	cmd.Println("migrate")
+
 	return nil
 }

@@ -29,20 +29,24 @@ func RootCmd() *cobra.Command {
 	return cmd
 }
 
-type cmdRunner func(ctx context.Context, cmd *cobra.Command, args []string, cfg *internal.Config) error
+type runFunc func(ctx context.Context, cmd *cobra.Command, args []string, cfg *internal.Config) error
 
-func runCmd(runner cmdRunner) func(cmd *cobra.Command, args []string) error {
+func runCmd(runner runFunc) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		cfgFile := viper.GetString("config")
-		if cfgFile == "" {
-			cfgFile = os.Getenv("OPENDS_CONFIG_FILE")
-		}
-
-		cfg, err := internal.NewConfig(cfgFile)
+		cfg, err := loadConfig()
 		if err != nil {
 			return err
 		}
 
 		return runner(cmd.Context(), cmd, args, cfg)
 	}
+}
+
+func loadConfig() (*internal.Config, error) {
+	cfgFile := viper.GetString("config")
+	if cfgFile == "" {
+		cfgFile = os.Getenv("OPENDS_CONFIG_FILE")
+	}
+
+	return internal.NewConfig(cfgFile)
 }
