@@ -8,13 +8,16 @@ import (
 
 	"github.com/getopends/opends/pkg/handler"
 	"github.com/gorilla/mux"
+	"github.com/jmoiron/sqlx"
 )
 
 type Handler struct {
 	handler.Handler
 	Config       *Config
-	Service      *Service
+	Service      *TransactionService
 	PublicRouter *mux.Router
+
+	DB *sqlx.DB
 }
 
 func (h *Handler) Ping(rw http.ResponseWriter, req *http.Request) {

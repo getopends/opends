@@ -2,9 +2,9 @@ package internal
 
 type ServiceOptions struct{}
 
-type Service struct{}
+type TransactionService struct{}
 
-func (s Service) ListTransactions(opts *ListTransactionOptions) ([]Transaction, *Problem) {
+func (s TransactionService) ListTransactions(opts *ListTransactionOptions) ([]Transaction, *Problem) {
 	return []Transaction{
 		{
 			ID:         1,
@@ -13,14 +13,14 @@ func (s Service) ListTransactions(opts *ListTransactionOptions) ([]Transaction, 
 	}, nil
 }
 
-func (s Service) CreateTransaction(body *CreateTransactionInput) (*Transaction, *Problem) {
+func (s TransactionService) CreateTransaction(body *CreateTransactionInput) (*Transaction, *Problem) {
 	return &Transaction{
 		ID:         1,
 		ExternalID: body.ExternalID,
 	}, nil
 }
 
-func (s Service) GetTransaction(id uint64) (*Transaction, *Problem) {
+func (s TransactionService) GetTransaction(id uint64) (*Transaction, *Problem) {
 	return &Transaction{
 		ID: id,
 	}, nil

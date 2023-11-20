@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/getopends/opends/internal"
+	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -13,7 +14,7 @@ var cfg internal.Config
 func RootCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "opends-server",
-		RunE: func(_ *cobra.Command, _ []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			cfgFile := viper.GetString("config")
 			if cfgFile == "" {
 				cfgFile = os.Getenv("OPENDS_CONFIG_FILE")
@@ -24,7 +25,7 @@ func RootCmd() *cobra.Command {
 				return err
 			}
 
-			return doServe(cfg)
+			return doServe(cmd.Context(), cfg)
 		},
 	}
 

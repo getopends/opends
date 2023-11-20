@@ -15,16 +15,20 @@ import (
 	"github.com/getopends/opends/internal"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/jmoiron/sqlx"
 	"github.com/spf13/cobra"
 )
 
-var defaultPort = 13000
+var (
+	defaultPort = int16(13000)
+	defaultHost = "0.0.0.0"
+)
 
 func serveCmd(cfg *internal.Config) *cobra.Command {
 	serveCmd := &cobra.Command{
 		Use: "serve",
-		RunE: func(_ *cobra.Command, _ []string) error {
-			return doServe(cfg)
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			return doServe(cmd.Context(), cfg)
 		},
 	}
 
@@ -33,69 +37,62 @@ func serveCmd(cfg *internal.Config) *cobra.Command {
 	return serveCmd
 }
 
-func doServe(cfg *internal.Config) error {
-	h := &internal.Handler{
-		Service:      &internal.Service{},
-		PublicRouter: mux.NewRouter(),
-	}
-
-	h.SetRoutes()
-
-	host := cfg.Public.Host
-	if host == "" {
-		host = "0.0.0.0"
-	}
-
-	port := cfg.Public.Port
-	if port == 0 {
-		port = int16(defaultPort)
-	}
-
-	addr := fmt.Sprintf("%v:%v", host, port)
-
-	var router http.Handler = h.PublicRouter
-	if cfg.CORS.Enable {
+func configureCORS(router http.Handler, cfg *internal.CORSOptions) http.Handler {
+	if cfg.Enable {
 		opts := []handlers.CORSOption{}
 
-		if cfg.CORS.AllowCredentials {
+		if cfg.AllowCredentials {
 			opts = append(opts, handlers.AllowCredentials())
 		}
 
-		if cfg.CORS.MaxAge > 0 {
-			opts = append(opts, handlers.MaxAge(cfg.CORS.MaxAge))
+		if cfg.MaxAge > 0 {
+			opts = append(opts, handlers.MaxAge(cfg.MaxAge))
 		}
 
-		if len(cfg.CORS.AllowedHeaders) > 0 {
-			opts = append(opts, handlers.AllowedHeaders(cfg.CORS.AllowedHeaders))
+		if len(cfg.AllowedHeaders) > 0 {
+			opts = append(opts, handlers.AllowedHeaders(cfg.AllowedHeaders))
 		}
 
-		if len(cfg.CORS.AllowedOrigins) > 0 {
-			opts = append(opts, handlers.AllowedOrigins(cfg.CORS.AllowedOrigins))
+		if len(cfg.AllowedOrigins) > 0 {
+			opts = append(opts, handlers.AllowedOrigins(cfg.AllowedOrigins))
 		}
 
-		if len(cfg.CORS.AllowedMethods) > 0 {
-			opts = append(opts, handlers.AllowedMethods(cfg.CORS.AllowedMethods))
+		if len(cfg.AllowedMethods) > 0 {
+			opts = append(opts, handlers.AllowedMethods(cfg.AllowedMethods))
 		}
 
-		if len(cfg.CORS.ExposedHeaders) > 0 {
-			opts = append(opts, handlers.ExposedHeaders(cfg.CORS.ExposedHeaders))
+		if len(cfg.ExposedHeaders) > 0 {
+			opts = append(opts, handlers.ExposedHeaders(cfg.ExposedHeaders))
 		}
 
 		router = handlers.CORS(opts...)(router)
 	}
 
-	srv := http.Server{
-		Addr:    addr,
-		Handler: router,
+	return router
+}
+
+func configureDB(cfg *internal.DatabaseOptions) (*sqlx.DB, error) {
+	driver := cfg.Driver
+	if driver == "" {
+		driver = "postgres"
 	}
 
+	db, err := sqlx.Connect(driver, cfg.DSN)
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
+}
+
+func configureTLS(srv *http.Server, cfg *internal.ServerOptions) error {
 	tlsConfig := &tls.Config{}
 
-	if r := cfg.Public.TLS.RequireClientCert; r {
+	if r := cfg.TLS.RequireClientCert; r {
 		tlsConfig.ClientAuth = tls.RequireAndVerifyClientCert
 	}
 
-	if file := cfg.Public.TLS.CACert; file != "" {
+	if file := cfg.TLS.CACert; file != "" {
 		caCert, err := os.ReadFile(file)
 		if err != nil {
 			return err
@@ -108,6 +105,60 @@ func doServe(cfg *internal.Config) error {
 		tlsConfig.BuildNameToCertificate()
 	}
 
+	srv.TLSConfig = tlsConfig
+
+	return nil
+}
+
+func newServer(r *mux.Router, cfg *internal.ServerOptions, cors *internal.CORSOptions) (*http.Server, error) {
+	host := cfg.Host
+	if host == "" {
+		host = defaultHost
+	}
+
+	port := cfg.Port
+	if port == 0 {
+		port = defaultPort
+	}
+
+	addr := fmt.Sprintf("%v:%v", host, port)
+
+	router := configureCORS(r, cors)
+
+	srv := http.Server{
+		Addr:    addr,
+		Handler: router,
+	}
+
+	if err := configureTLS(&srv, cfg); err != nil {
+		return nil, err
+	}
+
+	return &srv, nil
+}
+
+func doServe(ctx context.Context, cfg *internal.Config) error {
+	db, err := configureDB(&cfg.Database)
+	if err != nil {
+		return err
+	}
+
+	h := &internal.Handler{
+		Service:      &internal.TransactionService{},
+		PublicRouter: mux.NewRouter(),
+		DB:           db,
+	}
+
+	h.RegisterRoutes()
+
+	srv, err := newServer(h.PublicRouter, &cfg.Public, &cfg.CORS)
+	if err != nil {
+		return err
+	}
+
+	defer srv.Close()
+	defer db.Conn(ctx)
+
 	if cfg.Debug {
 		log.Println("Debug is enabled")
 	}
@@ -116,7 +167,7 @@ func doServe(cfg *internal.Config) error {
 	defer stop()
 
 	go func() {
-		log.Printf("Starting server at %v", addr)
+		log.Printf("Starting server at %v", srv.Addr)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("listen and serve returned err: %v", err)
 		}

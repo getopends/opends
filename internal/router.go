@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func (h *Handler) SetRoutes() {
+func (h *Handler) RegisterRoutes() {
 	h.setDefaultHandlers()
 	h.setAdminRoutes()
 	h.setPublicRoutes()
