@@ -57,6 +57,9 @@ func registerServeFlags(cmd *cobra.Command) {
 
 	cmd.Flags().String("tls-cert", "", "TLS cert")
 	viper.BindPFlag("tls.cert", cmd.Flags().Lookup("tls-cert"))
+
+	cmd.Flags().Bool("tls-enable", false, "TLS enable")
+	viper.BindPFlag("tls.enable", cmd.Flags().Lookup("tls-enable"))
 }
 
 type runFunc func(ctx context.Context, cmd *cobra.Command, args []string, cfg *internal.Config) error
