@@ -24,12 +24,10 @@ var (
 	defaultHost = "0.0.0.0"
 )
 
-func serveCmd(cfg *internal.Config) *cobra.Command {
+func serveCmd() *cobra.Command {
 	serveCmd := &cobra.Command{
-		Use: "serve",
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			return doServe(cmd.Context(), cfg)
-		},
+		Use:  "serve",
+		RunE: runCmd(doServe),
 	}
 
 	serveCmd.Flags().Bool("debug", false, "Debug")
@@ -137,7 +135,7 @@ func newServer(r *mux.Router, cfg *internal.ServerOptions, cors *internal.CORSOp
 	return &srv, nil
 }
 
-func doServe(ctx context.Context, cfg *internal.Config) error {
+func doServe(ctx context.Context, _ *cobra.Command, _ []string, cfg *internal.Config) error {
 	db, err := configureDB(&cfg.Database)
 	if err != nil {
 		return err
