@@ -30,6 +30,8 @@ func serveCmd() *cobra.Command {
 		RunE: runCmd(doServe),
 	}
 
+	registerServeFlags(serveCmd)
+
 	serveCmd.Flags().Bool("debug", false, "Debug")
 
 	return serveCmd
@@ -136,15 +138,15 @@ func newServer(r *mux.Router, cfg *internal.ServerOptions, cors *internal.CORSOp
 }
 
 func doServe(ctx context.Context, _ *cobra.Command, _ []string, cfg *internal.Config) error {
-	db, err := configureDB(&cfg.Database)
-	if err != nil {
-		return err
-	}
+	/*	db, err := configureDB(&cfg.Database)
+		if err != nil {
+			return err
+		}*/
 
 	h := &internal.Handler{
 		Service:      &internal.TransactionService{},
 		PublicRouter: mux.NewRouter(),
-		DB:           db,
+		//	DB:           db,
 	}
 
 	h.RegisterRoutes()
@@ -155,7 +157,7 @@ func doServe(ctx context.Context, _ *cobra.Command, _ []string, cfg *internal.Co
 	}
 
 	defer srv.Close()
-	defer db.Conn(ctx)
+	// defer db.Conn(ctx)
 
 	if cfg.Debug {
 		log.Println("Debug is enabled")
