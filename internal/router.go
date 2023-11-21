@@ -24,6 +24,8 @@ const (
 func (h *Handler) setPublicRoutes() {
 	r := h.PublicRouter.PathPrefix("/v1").Subrouter()
 
+	r.HandleFunc("/version", h.Version).Methods(http.MethodPost)
+
 	r.HandleFunc("/transactions", h.CreateTransaction).Methods(http.MethodPost)
 	r.HandleFunc("/transactions", h.ListTransactions).Methods(http.MethodGet)
 	r.HandleFunc("/transactions/{id}", h.GetTransaction).Methods(http.MethodGet)

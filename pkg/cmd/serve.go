@@ -163,8 +163,8 @@ func doServe(ctx context.Context, _ *cobra.Command, _ []string, cfg *internal.Co
 		log.Println("Debug is enabled")
 	}
 
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
+	ctx, cancel := signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM)
+	defer cancel()
 
 	go func() {
 		log.Printf("Starting server at %v", srv.Addr)

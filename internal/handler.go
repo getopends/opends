@@ -36,6 +36,22 @@ func (h *Handler) Ping(rw http.ResponseWriter, req *http.Request) {
 	h.SendJSON(rw, resp)
 }
 
+func (h *Handler) Version(rw http.ResponseWriter, req *http.Request) {
+	body, err := parseTransactionInput(req)
+	if err != nil {
+		h.SendJSON(rw, err)
+		return
+	}
+
+	resp, err := h.Service.CreateTransaction(body)
+	if err != nil {
+		h.SendJSON(rw, err)
+		return
+	}
+
+	h.SendJSON(rw, resp)
+}
+
 func (h *Handler) CreateTransaction(rw http.ResponseWriter, req *http.Request) {
 	body, err := parseTransactionInput(req)
 	if err != nil {
